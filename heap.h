@@ -78,4 +78,17 @@ public:
     }
     return Heap[n];
   }
+
+  E returnVal(int pos) {
+	  return Heap[pos];
+  }
+
+  void replaceVal(int pos, E val) {
+	  Heap[pos] = val;
+  }
+
+  void setHeapSize(int size)
+  {
+	  n = size;
+  }
 };
