@@ -24,7 +24,7 @@ template<typename E> void multiMrg(int buffSize);
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = 40, heapSize = 7;
+	int bufferSize = 31, heapSize = 31;
 	std::streamoff start;
 
 	std::string *heapArr = new std::string[heapSize];
@@ -151,7 +151,7 @@ void printArr(E a[], int size) {	//Prints an array
 template<typename E>
 void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
 	for (int i = 0; i < size; i++) {
-		std::cout << heap.returnVal(i) << std::endl;
+		std::cout << heap.getVal(i) << std::endl;
 	}
 }
 
@@ -175,26 +175,18 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 				minHeap->buildHeap();
 				std::cout << "buildHeap_______________________" << std::endl;
 			}
-			if (j != 0)		//Prevent exception
+
+			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
+			if (inBuff[j] > outBuff[j])
 			{
-				if (outBuff[j - 1] <= minHeap->returnVal(0))	//If previous array value is smaller than current root
-				{
-					outBuff[j] = minHeap->returnVal(0);	//output heap root
-					minHeap->replaceVal(0, inBuff[j]);	//replace heap root with input buffer value
-					minHeap->buildHeap();
-					std::cout << minHeap->size() << "size_______________________" << std::endl;
-				}
-				else
-				{	//If previous array value is greater than current root then remove first
-					minHeap->removefirst();
-					std::cout << minHeap->size() << "size_______________________" << std::endl;
-				}
+				minHeap->setVal(0, inBuff[j]);
+				minHeap->siftdown(0);	//siftdown root
+				std::cout << minHeap->size() << "size_______________________" << std::endl;
 			}
 			else
 			{
-				outBuff[j] = minHeap->returnVal(0);	//output heap root
-				minHeap->replaceVal(0, inBuff[j]);	//replace heap root with input buffer value
-				minHeap->buildHeap();
+				minHeap->removefirst();
+				std::cout << minHeap->size() << "size_______________________" << std::endl;
 			}
 		}
 		writeData(outBuff, endStart, buffSize);

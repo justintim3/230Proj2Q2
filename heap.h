@@ -14,18 +14,6 @@ private:
   int maxsize;         // Maximum size of the heap
   int n;               // Number of elements now in the heap
 
-  // Helper function to put element in its correct place
-  void siftdown(int pos) {
-    while (!isLeaf(pos)) { // Stop if pos is a leaf
-      int j = leftchild(pos);  int rc = rightchild(pos);
-      if ((rc < n) && Comp::prior(Heap[rc], Heap[j]))
-        j = rc;            // Set j to greater child's value
-      if (Comp::prior(Heap[pos], Heap[j])) return; // Done
-      swap(Heap, pos, j);
-      pos = j;             // Move down
-    }
-  }
-
 public:
   heap(E* h, int num, int max)     // Constructor
     { Heap = h;  n = num;  maxsize = max;  buildHeap(); }
@@ -41,6 +29,18 @@ public:
     { return (pos-1)/2; }
   void buildHeap()           // Heapify contents of Heap
     { for (int i=n/2-1; i>=0; i--) siftdown(i); }
+
+  // Helper function to put element in its correct place
+  void siftdown(int pos) {
+	  while (!isLeaf(pos)) { // Stop if pos is a leaf
+		  int j = leftchild(pos);  int rc = rightchild(pos);
+		  if ((rc < n) && Comp::prior(Heap[rc], Heap[j]))
+			  j = rc;            // Set j to greater child's value
+		  if (Comp::prior(Heap[pos], Heap[j])) return; // Done
+		  swap(Heap, pos, j);
+		  pos = j;             // Move down
+	  }
+  }
 
   // Insert "it" into the heap
   void insert(const E& it) {
@@ -79,11 +79,11 @@ public:
     return Heap[n];
   }
 
-  E returnVal(int pos) {
+  E getVal(int pos) {
 	  return Heap[pos];
   }
 
-  void replaceVal(int pos, E val) {
+  void setVal(int pos, E val) {
 	  Heap[pos] = val;
   }
 
