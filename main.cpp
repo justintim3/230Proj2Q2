@@ -17,23 +17,31 @@ template<typename E> void fillArrAsc(E a[], int size);
 template<typename E> void shuffleArr(E a[], int size);
 std::streamoff readData(std::string *inBuff, std::streamoff start, int size);
 template<typename E> void printArr(E a[], int size);
+template<typename E> void printHeap(heap<E, Comp<E>>* heap, int size);
 template<typename E> void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
-void writeData(std::string *outBuff, std::streamoff start, int size);
+void clearData();
+void writeData(std::string *outBuff, int size);
 template<typename E> void multiMrg(int buffSize);
 
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = 31, heapSize = 31;
+	int bufferSize = 7, heapSize = 7;
 	std::streamoff start;
 
 	std::string *heapArr = new std::string[heapSize];
-
-	genRandFile2(bufferSize + heapSize);
-	start = readData(heapArr, 0, heapSize);
+	clearData();	//clear output file
+	genRandFile2(heapSize + (bufferSize * 1));	//generate input file
+	start = readData(heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
+		std::cout << "heap___________________________________" << std::endl;
+		printArr(heapArr, heapSize);
 	repSel<std::string>(minHeap, start, bufferSize);
-	//multiMrg<std::string>(bufferSize + heapSize);
+	qsortO(heapArr, heapSize);
+		std::cout << "heap___________________________________" << std::endl;
+		printArr(heapArr, heapSize);
+	writeData(heapArr, heapSize);
+	//multiMrg<std::string>(heapSize + (bufferSize * 2));
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
@@ -117,14 +125,19 @@ std::streamoff readData(std::string *inBuff, std::streamoff start, int size)
 	//delete buffer;
 }
 
-void writeData(std::string *outBuff, std::streamoff start, int size)
+void clearData()
 {
-	std::streamoff getPos;
-	std::ofstream ofs("Sorted Data.txt");
+	std::ofstream ofs("Sorted Data.txt", std::ios::out | std::ios::trunc);
+	ofs.close();
+}
+
+void writeData(std::string *outBuff, int size)
+{
+	std::ofstream ofs("Sorted Data.txt", std::ios::out | std::ios::app);
 
 	if (ofs.is_open())
 	{
-		ofs.seekp(start);
+		//ofs.seekp(start);
 		//while(!stream.eof())
 		for (int i = 0; i < size; i++)
 		{
@@ -132,13 +145,8 @@ void writeData(std::string *outBuff, std::streamoff start, int size)
 			ofs << outBuff[i] << std::endl;
 		}
 	}
-
-	getPos = ofs.tellp();
 	//printArr(outBuff, size);
 	ofs.close();
-
-	//delete buffer;
-	//return getPos;
 }
 
 template<typename E>
@@ -151,7 +159,7 @@ void printArr(E a[], int size) {	//Prints an array
 template<typename E>
 void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
 	for (int i = 0; i < size; i++) {
-		std::cout << heap.getVal(i) << std::endl;
+		std::cout << heap->getVal(i) << std::endl;
 	}
 }
 
@@ -160,12 +168,16 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 {
 	E *inBuff = new E[buffSize];
 	E *outBuff = new E[buffSize];
-	std::streamoff endStart = 0;
 	int heapSize = minHeap->size();
 
 	for (int i = 0; i < 1; i++)
 	{
+		std::cout << "start" << start << std::endl;
 		start = readData(inBuff, start, buffSize);
+		std::cout << "start" << start << std::endl;
+		//std::cout << "inBuff_______________________" << std::endl;
+		//printArr(inBuff, buffSize);
+		//std::cout << "inBuff_______________________" << std::endl;
 		for (int j = 0; j < buffSize; j++)
 		{
 
@@ -173,23 +185,31 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 			{
 				minHeap->setHeapSize(heapSize);
 				minHeap->buildHeap();
-				std::cout << "buildHeap_______________________" << std::endl;
+				//std::cout << "buildHeap_______________________" << std::endl;
 			}
 
 			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
+			//std::cout << "outBuff_______________________" << outBuff[j] << std::endl;
 			if (inBuff[j] > outBuff[j])
 			{
 				minHeap->setVal(0, inBuff[j]);
 				minHeap->siftdown(0);	//siftdown root
-				std::cout << minHeap->size() << "size_______________________" << std::endl;
+				//std::cout << "heap_______________________" << std::endl;
+				//printHeap(minHeap, buffSize);
+				//std::cout << "heap_______________________" << std::endl;
+				//std::cout << minHeap->size() << "size_______________________" << std::endl;
+
 			}
 			else
 			{
 				minHeap->removefirst();
-				std::cout << minHeap->size() << "size_______________________" << std::endl;
+				//std::cout << "heap_______________________" << std::endl;
+				//printHeap(minHeap, buffSize);
+				//std::cout << "heap_______________________" << std::endl;
+				//std::cout << minHeap->size() << "size_______________________" << std::endl;
 			}
 		}
-		writeData(outBuff, endStart, buffSize);
+		writeData(outBuff, buffSize);
 
 		std::cout << "in___________________________________" << std::endl;
 		printArr(inBuff, buffSize);
